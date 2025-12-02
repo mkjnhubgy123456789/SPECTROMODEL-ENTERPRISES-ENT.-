@@ -1,0 +1,129 @@
+/**
+ * SPECTROMODEL SUBSCRIPTION & ACCESS SYSTEM
+ * Implements tiered access logic based on fair market research and ethical pricing.
+ */
+
+export const SUBSCRIPTION_TIERS = {
+  FREE: 'free',
+  PRO: 'pro',
+  PREMIUM: 'premium'
+};
+
+// Market-based ethical pricing (Research simulated 2025)
+export const PRICING = {
+  PRO: {
+    monthly: 14.99,
+    yearly: 149.99,
+    label: "Pro Creator"
+  },
+  PREMIUM: {
+    monthly: 29.99,
+    yearly: 299.99,
+    label: "Studio Master"
+  }
+};
+
+// Feature Usage Limits (Count per period)
+// NOTE: These are for features that ARE accessible. 
+// If a feature is blocked in FEATURE_ACCESS, these limits don't matter (it's 0).
+export const LIMITS = {
+  [SUBSCRIPTION_TIERS.FREE]: {
+    analysis_uploads: 3, // Keeping 3 for the allowed features if any use this limit
+    time_series: 0,      // Blocked
+    advanced_analytics: 0, // Blocked
+    market_fit: 0,       // Blocked
+    period: 'month'
+  },
+  [SUBSCRIPTION_TIERS.PRO]: {
+    analysis_uploads: 24,
+    time_series: 24,
+    advanced_analytics: 24,
+    market_fit: 24,
+    period: 'day'
+  },
+  [SUBSCRIPTION_TIERS.PREMIUM]: {
+    analysis_uploads: Infinity,
+    time_series: Infinity,
+    advanced_analytics: Infinity,
+    market_fit: Infinity,
+    period: 'unlimited'
+  }
+};
+
+// Feature Access Gates - WHITELIST APPROACH
+// Only listed tiers can access.
+export const FEATURE_ACCESS = {
+  // --- ALLOWED FOR FREE (UNLIMITED) ---
+  AFRICAN_RESEARCH: [SUBSCRIPTION_TIERS.FREE, SUBSCRIPTION_TIERS.PRO, SUBSCRIPTION_TIERS.PREMIUM],
+  MUSIC_EDUCATION: [SUBSCRIPTION_TIERS.FREE, SUBSCRIPTION_TIERS.PRO, SUBSCRIPTION_TIERS.PREMIUM],
+  COMPANY_COPYRIGHT: [SUBSCRIPTION_TIERS.FREE, SUBSCRIPTION_TIERS.PRO, SUBSCRIPTION_TIERS.PREMIUM],
+  VERSION_HISTORY: [SUBSCRIPTION_TIERS.FREE, SUBSCRIPTION_TIERS.PRO, SUBSCRIPTION_TIERS.PREMIUM],
+  HAPTIC_FEEDBACK: [SUBSCRIPTION_TIERS.FREE, SUBSCRIPTION_TIERS.PRO, SUBSCRIPTION_TIERS.PREMIUM],
+  ACCESSIBILITY: [SUBSCRIPTION_TIERS.FREE, SUBSCRIPTION_TIERS.PRO, SUBSCRIPTION_TIERS.PREMIUM],
+  SETTINGS: [SUBSCRIPTION_TIERS.FREE, SUBSCRIPTION_TIERS.PRO, SUBSCRIPTION_TIERS.PREMIUM],
+  TERMS: [SUBSCRIPTION_TIERS.FREE, SUBSCRIPTION_TIERS.PRO, SUBSCRIPTION_TIERS.PREMIUM],
+  FAQ: [SUBSCRIPTION_TIERS.FREE, SUBSCRIPTION_TIERS.PRO, SUBSCRIPTION_TIERS.PREMIUM],
+  SUPPORT: [SUBSCRIPTION_TIERS.FREE, SUBSCRIPTION_TIERS.PRO, SUBSCRIPTION_TIERS.PREMIUM],
+  DISTRIBUTION: [SUBSCRIPTION_TIERS.FREE, SUBSCRIPTION_TIERS.PRO, SUBSCRIPTION_TIERS.PREMIUM],
+  LEGAL_AUDIT: [SUBSCRIPTION_TIERS.FREE, SUBSCRIPTION_TIERS.PRO, SUBSCRIPTION_TIERS.PREMIUM], // "Copyright, Patent, Trademark" pages
+  ADMIN_AUDIT: ['admin'], // ONLY ADMIN CAN ACCESS
+
+  // --- BLOCKED FOR FREE (PRO/PREMIUM ONLY) ---
+  // Analyses
+  TRACK_ANALYSIS: [SUBSCRIPTION_TIERS.PRO, SUBSCRIPTION_TIERS.PREMIUM],
+  DSP_ALGORITHMS: [SUBSCRIPTION_TIERS.PRO, SUBSCRIPTION_TIERS.PREMIUM],
+  RHYTHM_ANALYSIS: [SUBSCRIPTION_TIERS.PRO, SUBSCRIPTION_TIERS.PREMIUM],
+  SHEET_MUSIC: [SUBSCRIPTION_TIERS.PRO, SUBSCRIPTION_TIERS.PREMIUM],
+  LYRICS_RETRIEVAL: [SUBSCRIPTION_TIERS.PRO, SUBSCRIPTION_TIERS.PREMIUM],
+  LYRICS_ANALYZER: [SUBSCRIPTION_TIERS.PRO, SUBSCRIPTION_TIERS.PREMIUM],
+  EMOJI_LYRICS: [SUBSCRIPTION_TIERS.PRO, SUBSCRIPTION_TIERS.PREMIUM], // Was Premium only, now blocked for free
+  GENRE_PREDICTOR: [SUBSCRIPTION_TIERS.PRO, SUBSCRIPTION_TIERS.PREMIUM],
+  TRACK_QUERY: [SUBSCRIPTION_TIERS.PRO, SUBSCRIPTION_TIERS.PREMIUM],
+  
+  // Business Tools
+  MONETIZATION: [SUBSCRIPTION_TIERS.PRO, SUBSCRIPTION_TIERS.PREMIUM], // Blocked as requested
+  MARKET_RESEARCH: [SUBSCRIPTION_TIERS.PRO, SUBSCRIPTION_TIERS.PREMIUM],
+  MARKET_FIT: [SUBSCRIPTION_TIERS.PRO, SUBSCRIPTION_TIERS.PREMIUM],
+  TIME_SERIES: [SUBSCRIPTION_TIERS.PRO, SUBSCRIPTION_TIERS.PREMIUM],
+  INDUSTRY_INSIGHTS: [SUBSCRIPTION_TIERS.PRO, SUBSCRIPTION_TIERS.PREMIUM],
+  
+  // Creative Tools
+  ADVANCED_ANALYTICS: [SUBSCRIPTION_TIERS.PRO, SUBSCRIPTION_TIERS.PREMIUM],
+  STUDIO_CORRECTOR: [SUBSCRIPTION_TIERS.PRO, SUBSCRIPTION_TIERS.PREMIUM],
+  VIDEO_STUDIO: [SUBSCRIPTION_TIERS.PRO, SUBSCRIPTION_TIERS.PREMIUM],
+  VIDEO_GENERATOR: [SUBSCRIPTION_TIERS.PRO, SUBSCRIPTION_TIERS.PREMIUM],
+  SPECTROVERSE: [SUBSCRIPTION_TIERS.PRO, SUBSCRIPTION_TIERS.PREMIUM],
+  ARTIST_VAULT: [SUBSCRIPTION_TIERS.PRO, SUBSCRIPTION_TIERS.PREMIUM],
+  
+  // Other Tools
+  COPYRIGHT_PROTECTION: [SUBSCRIPTION_TIERS.PRO, SUBSCRIPTION_TIERS.PREMIUM], // The tool
+  AUDIO_CONVERTER: [SUBSCRIPTION_TIERS.PRO, SUBSCRIPTION_TIERS.PREMIUM],
+  PROJECTS: [SUBSCRIPTION_TIERS.PRO, SUBSCRIPTION_TIERS.PREMIUM],
+  DASHBOARD_ACTIONS: [SUBSCRIPTION_TIERS.PRO, SUBSCRIPTION_TIERS.PREMIUM], // Quick actions, etc.
+  THEME_CUSTOMIZER: [SUBSCRIPTION_TIERS.PRO, SUBSCRIPTION_TIERS.PREMIUM],
+  RECENT_ANALYSES: [SUBSCRIPTION_TIERS.PRO, SUBSCRIPTION_TIERS.PREMIUM],
+  AVATAR_CUSTOMIZER: [SUBSCRIPTION_TIERS.PRO, SUBSCRIPTION_TIERS.PREMIUM]
+};
+
+export const checkFeatureAccess = (userTier, featureKey) => {
+  const allowedTiers = FEATURE_ACCESS[featureKey];
+  if (!allowedTiers) return true; // Default open if not defined (but we defined almost everything)
+  return allowedTiers.includes(userTier || 'free');
+};
+
+export const checkUsageLimit = (userTier, limitKey, currentUsageCount) => {
+  const limits = LIMITS[userTier || 'free'];
+  if (!limits) return false;
+  
+  const limit = limits[limitKey];
+  if (limit === undefined) return true; 
+  
+  return currentUsageCount < limit;
+};
+
+export const getLimitLabel = (userTier, limitKey) => {
+  const limits = LIMITS[userTier || 'free'];
+  if (!limits || !limits[limitKey]) return "Unlimited";
+  if (limits[limitKey] === Infinity) return "Unlimited";
+  return `${limits[limitKey]} / ${limits.period}`;
+};
