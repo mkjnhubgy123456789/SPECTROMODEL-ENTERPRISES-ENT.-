@@ -272,7 +272,8 @@ export default function LandingPage() {
                 </div>
               </div>
 
-              <h1 className="font-black text-white tracking-tighter spectro-title break-words w-full text-[25vw] leading-[0.8] z-10 select-none mt-10 drop-shadow-[0_0_50px_rgba(255,255,255,0.5)]" style={{ fontSize: '25vw', lineHeight: '0.8' }}>
+              <h1 className="font-black text-white tracking-tighter spectro-title break-words w-full text-[20vw]
+                 leading-[0.8] z-10 select-none mt-10 drop-shadow-[0_0_50px_rgba(255,255,255,0.5)]" style={{ fontSize: '20vw', lineHeight: '0.8' }}>
                 SPECTRO<br className="xl:hidden" />MODEL
               </h1>
             </div>
