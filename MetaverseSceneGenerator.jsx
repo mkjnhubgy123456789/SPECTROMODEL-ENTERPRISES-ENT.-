@@ -10,7 +10,7 @@ import { Sparkles, Users, Music, Zap, Download, MousePointer, Activity, Wind, Ma
 import * as THREE from 'three';
 import { base44 } from '@/api/base44Client';
 
-export default function MetaverseSceneGenerator({ onInteraction, mlModel, mlImprovements, onSceneGenerated }) {
+export default function SceneGenerator({ onInteraction, mlModel, mlImprovements, onSceneGenerated }) {
   const [sceneType, setSceneType] = useState('concert');
   const [crowdSize, setCrowdSize] = useState(500);
   const [lightingIntensity, setLightingIntensity] = useState(75);
